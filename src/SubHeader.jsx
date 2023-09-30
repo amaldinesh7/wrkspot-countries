@@ -19,9 +19,11 @@ const SubHeader = ({
 
   const handleFilterClear = () => {
     setPopulationFilter(null);
+    setCountrySearch("");
   };
+
   return (
-    <div className="flex justify-between pb-4 pt-1">
+    <div className="flex justify-between pt-1 pb-4">
       <div className="flex gap-4">
         <Input
           placeholder="Country name"

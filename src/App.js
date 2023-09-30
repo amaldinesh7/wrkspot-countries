@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import axios from "axios";
 
-function App() {
+import Header from "./Header";
+import SubHeader from "./SubHeader";
+import CountriesList from "./CountriesList";
+import { COUNTRIES_URL } from "./constants";
+import useCountryFilters from "./useCountryFilters";
+
+const App = () => {
+  const [countries, setCountries] = useState([]);
+  const [countrySearch, setCountrySearch] = useState("");
+  const [populationFilter, setPopulationFilter] = useState(null);
+  const [isLoadingCountries, setIsLoadingCountries] = useState(false);
+
+  const fetchCountries = async () => {
+    setIsLoadingCountries(true);
+    try {
+      const response = await axios.get(COUNTRIES_URL);
+      setCountries(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingCountries(false);
+    }
+  };
+
+  const filteredCountries = useCountryFilters({
+    countries,
+    countrySearch,
+    populationFilter,
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="px-6">
+      <Header />
+      <SubHeader
+        fetchCountries={fetchCountries}
+        countrySearch={countrySearch}
+        setCountrySearch={setCountrySearch}
+        populationFilter={populationFilter}
+        setPopulationFilter={setPopulationFilter}
+      />
+      <CountriesList
+        countries={filteredCountries}
+        isLoadingCountries={isLoadingCountries}
+      />
     </div>
   );
-}
+};
 
 export default App;
